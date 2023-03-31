@@ -6,6 +6,7 @@ export default function EntryField(props){
         <View style={props.style}>
             <Text>{props.title}</Text>
             <MaskedTextInput style= {style.entry}
+                text={props.text}
                 placeholder={props.placeholder}
                 keyboardType={props.keyboardType}
                 type={props.type}

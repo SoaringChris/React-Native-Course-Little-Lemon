@@ -1,5 +1,5 @@
 import { Button, Pressable, StyleSheet, Text, Touchble, View } from "react-native"
-import { Colors } from "../assets/globalStyles"
+import { Colors } from "../assets/GlobalStyles"
 
 export function PrimaryButton(props){
     return(
@@ -13,11 +13,11 @@ export function PrimaryButton(props){
 }
 
 export function SecondaryButton(props){
-    return <PrimaryButton style={[style.secondary, props.style]} color={Colors.primary1} title={props.title}/>
+    return <PrimaryButton style={[style.secondary, props.style]} color={Colors.primary1} title={props.title} onPress={props.onPress}/>
 }
 
 export function HighlightButton(props){
-    return <PrimaryButton style={[style.highlight, props.style]} title={props.title}/>
+    return <PrimaryButton style={[style.highlight, props.style]} title={props.title} onPress={props.onPress}/>
 }
 
 const style = StyleSheet.create({
