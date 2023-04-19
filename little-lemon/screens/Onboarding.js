@@ -1,13 +1,10 @@
 import { Button, Image, TextInput, View, Text, StyleSheet } from "react-native";
-import { Colors } from "react-native/Libraries/NewAppScreen";
+import Header from "../components/Header";
 
 export default function Onboarding(){
     return(
         <View style={styles.container}>
-            <View style={styles.header}>
-                <Image/>
-                <Text>Little Lemon</Text>
-            </View>
+            <Header/>
             <View style={styles.body}>
                 <Text style={styles.paragraph}>Let us get to know you</Text>
                 <View style={styles.inputArea}>
@@ -36,7 +33,6 @@ const styles = StyleSheet.create({
     },
     header:{
         flex: 1,
-        backgroundColor: 'red',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
@@ -44,7 +40,6 @@ const styles = StyleSheet.create({
     },
     body:{
         flex: 9,
-        backgroundColor: 'green',
         flexDirection: 'column',
         justifyContent: 'space-between'
     },
@@ -54,7 +49,6 @@ const styles = StyleSheet.create({
     buttonArea:{
         flex: 2,
         flexDirection: 'column',
-        backgroundColor: 'blue',
         justifyContent: 'center'
     },
     paragraph:{

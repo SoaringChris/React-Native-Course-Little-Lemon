@@ -1,4 +1,4 @@
-import {useState, Component} from 'react'
+import {Component} from 'react'
 import { StyleSheet, ScrollView, View } from "react-native";
 import { HighlightButton, PrimaryButton, SecondaryButton } from '../components/Buttons';
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -6,6 +6,7 @@ import CheckboxEntry from "../components/CheckboxEntry";
 import EntryField from "../components/EntryField";
 import ProfileAvatarView from '../components/profile/ProfileAvatarView';
 import { ProfileModel, ProfileEmailPreferences} from '../models/ProfileModel';
+import * as ImagePicker from 'expo-image-picker'
 
 
  export default class Profile extends Component {
@@ -18,15 +19,25 @@ import { ProfileModel, ProfileEmailPreferences} from '../models/ProfileModel';
         orderStatus: true,
         passwordChanges: true,
         specialOffers: true,
-        newsletter: true
+        newsletter: true,
+        image: null,
+        hasLoaded: false
     }
 
     render(){
 
+        if(!this.state.hasLoaded){
+            this.loadProfile()
+        }
 
         return(
             <ScrollView>
-                <ProfileAvatarView/>
+                <ProfileAvatarView
+                    title={(this.state.firstName ? this.state.firstName[0] : '') + (this.state.lastName ? this.state.lastName[0] : '')}
+                    source={this.state.image ? {uri: this.state.image} : null}
+                    onChangePress={this.pickImage}
+                    onRemovePress={this.removeImage}
+                />
                 <View>
                     <EntryField title='First name' style={style.entry} onChangeText={(text, other) => this.textText(text, other)} text={this.state.firstName}/>
                     <EntryField title='Last name' style={style.entry} onChangeText={text => this.setState({lastName: text})} text={this.state.lastName}/>
@@ -49,7 +60,7 @@ import { ProfileModel, ProfileEmailPreferences} from '../models/ProfileModel';
                         onValueChange={(value) => {this.setState({newsletter: value})}}
                     />
                 </View>
-                <HighlightButton title='Log out' style={style.logoutButton}/>
+                <HighlightButton title='Log out' onPress={this.logout} style={style.logoutButton}/>
                 <View style={style.buttonArea}>
                     <SecondaryButton title='Discard changes' style={style.button} onPress={this.loadProfile}/>
                     <PrimaryButton title='Save changes' style={style.button} onPress={this.saveProfile}/>
@@ -60,7 +71,7 @@ import { ProfileModel, ProfileEmailPreferences} from '../models/ProfileModel';
 
     saveProfile = async() => {
         const emailPreferences = new ProfileEmailPreferences(this.state.orderStatus, this.state.passwordChanges, this.state.specialOffers, this.state.newsletter)
-        const newProfile = new ProfileModel(this.state.firstName, this.state.lastName, this.state.email, this.state.phoneNumber, emailPreferences, null)
+        const newProfile = new ProfileModel(this.state.firstName, this.state.lastName, this.state.email, this.state.phoneNumber, emailPreferences, this.state.image)
         await AsyncStorage.setItem('profile', JSON.stringify(newProfile))
     }
 
@@ -81,24 +92,61 @@ import { ProfileModel, ProfileEmailPreferences} from '../models/ProfileModel';
                 orderStatus: profile.emailPreferences.orderStatus,
                 passwordChanges: profile.emailPreferences.pwChanges,
                 specialOffers: profile.emailPreferences.offers,
-                newsletter: profile.emailPreferences.newsletter
+                newsletter: profile.emailPreferences.newsletter,
+                image: profile.profilePicture,
+                hasLoaded: true
             })
         }else{
             this.setState({
-                firstName: '',
-                lastName: '',
-                email: '',
-                phoneNumber: '',
+                firstName: null,
+                lastName: null,
+                email: null,
+                phoneNumber: null,
                 orderStatus: true,
                 passwordChanges: true,
                 specialOffers: true,
-                newsletter: true
+                newsletter: true,
+                image: null,
+                hasLoaded: true
             })
         }
     }
 
     textText = (text, other) =>{
         this.setState({firstName: text})
+    }
+
+    pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 1
+        })
+
+        if(!result.canceled){
+            this.setState({image: result.assets[0].uri})
+        }
+    }
+
+    removeImage = () => {
+        this.setState({image: null})
+    }
+
+    logout = async () =>{
+        await AsyncStorage.removeItem('profile',
+            this.setState({
+                firstName: null,
+                lastName: null,
+                email: null,
+                phoneNumber: null,
+                orderStatus: true,
+                passwordChanges: true,
+                specialOffers: true,
+                newsletter: true,
+                image: null,
+                hasLoaded: true
+            })
+        )
     }
 }
 
