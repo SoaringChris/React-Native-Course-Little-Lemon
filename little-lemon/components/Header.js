@@ -1,17 +1,26 @@
 import { Component } from "react";
-import { Image, View, StyleSheet } from "react-native";
-import { Avatar } from "react-native-elements";
+import { Image, SafeAreaView, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Avatar, Icon } from "react-native-elements";
+import {useNavigation} from '@react-navigation/native'
 
-export default class Header extends Component{
-    render(){
+export default function({navigation}){
         return(
-            <View style={style.container}>
-                <Image source={require('../assets/images/Logo.png')} style={style.logo}/>
-                <Avatar rounded={true} style={style.avatar}/>
-            </View>
+            <SafeAreaView>
+                <View  style={style.container}>
+                    {navigation.canGoBack() &&
+                        <TouchableOpacity  style={style.backIcon} onPress={navigation.goBack}>
+                            <View>
+                                <Icon name='arrow-back' color='black' size={20}/>
+                            </View>
+                        </TouchableOpacity>
+                    }
+                    <Image source={require('../assets/images/Logo.png')} style={style.logo}/>
+                    <Avatar rounded={true} style={style.avatar}/>
+                </View>
+            </SafeAreaView>
             )
     }
-}
+
 
 const style = StyleSheet.create(
     {
@@ -21,7 +30,8 @@ const style = StyleSheet.create(
             justifyContent: 'center',
             alignContent: 'center',
             width: '100%',
-            marginVertical: 8
+            paddingVertical: 8,
+            backgroundColor: 'white'
         },
         avatar:{
             height: 40,
@@ -32,7 +42,21 @@ const style = StyleSheet.create(
                 .padStart(6, '0')}`,
             borderRadius: Number.MAX_SAFE_INTEGER,
             position: 'absolute',
-            right: 0
+            right: 0,
+            alignSelf: 'center'
         },
+        backIcon:{
+            height: 40,
+            width: 40,
+            position: 'absolute',
+            left: 0,
+            alignSelf: 'center',
+            justifyContent: 'center'
+        }
     }
 )
+
+// export default function(props){
+//     // const navigation = useNavigation()
+//     return <Header {...props}/>
+// }

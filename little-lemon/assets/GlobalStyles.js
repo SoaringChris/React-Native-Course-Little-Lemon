@@ -1,3 +1,5 @@
+import {useFonts } from 'expo-font'
+
 export const Colors = {
     primary1: '#495E57',
     primary2: '#F4CE14',
@@ -7,14 +9,42 @@ export const Colors = {
     secondary4: '#333333'
 }
 
+
+
 export const Typefaces = {
     title: {
-        font: 'Markazi Text',
+        fontFamily: 'MarkaziText-Regular',
         fontSize: 64,
-        //fontWeight: 'regular'
+        fontWeight: 'bold',
+    },
+
+    sectionTitle:{
+        fontFamily: 'Karla-ExtraBold',
+        fontSize: 20
     },
 
     subtitle:{
-        ///font
+        fontFamily: 'MarkaziText-Regular',
+        fontSize: 40,
+    },
+
+    leadText: {
+        fontFamily: 'Karla-Regular',
+        fontSize: 18,
+    },
+
+    specialsTitle: {
+        fontFamily: 'Karla-Bold',
+        fontSize: 16,
+    },
+
+    cardTitle:{
+        fontFamily: 'Karla-Bold',
+        fontSize: 18
+    },
+
+    paragraph:{
+        fontFamily: 'Karla-Regular',
+        fontSize: 16,
     }
 }

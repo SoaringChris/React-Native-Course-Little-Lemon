@@ -55,19 +55,19 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         felx: 1,
         paddingTop: 48,
-        fontFamily: 'Kalar',
+        fontFamily: 'Karla',
         fontSize: 20
     },
     textInput:{
         title: {
             textAlign: 'center',
-            fontFamily: 'Kalar',
+            fontFamily: 'Karla',
             fontSize: 20
         },
         input:{
             textAlign: 'center',
             borderColor: 'black',
-            fontFamily: 'Kalar',
+            fontFamily: 'Karla',
             fontSize: 20,
             borderWidth: 1,
             borderRadius: 16,
