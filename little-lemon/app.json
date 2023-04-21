@@ -29,11 +29,13 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [[
-      "expo-image-picker",
-      {
-        "photosPermission": "This app acccesses photos to upload to your profile"
-      }
-    ]]
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "This app acccesses photos to upload to your profile"
+        }
+      ]
+    ]
   }
 }

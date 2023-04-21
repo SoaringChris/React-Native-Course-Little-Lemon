@@ -1,8 +1,20 @@
-import { Component } from "react";
+import {useState} from 'react'
 import { Image, SafeAreaView, View, StyleSheet, TouchableOpacity, Platform, StatusBar } from "react-native";
 import { Avatar, Icon } from "react-native-elements";
+import { profile } from "../hooks/ProfileManager";
 
 export default function({navigation}){
+
+    const [userProfile, setProfile] = useState(null)
+
+    profile().then((profile) => {
+        if(profile != userProfile){
+            setProfile(profile)
+        }
+    })
+
+    let pageName = [...navigation.getState().routes].pop().name
+
         return(
             <SafeAreaView>
                 <View  style={[style.container, {marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}]}>
@@ -14,9 +26,14 @@ export default function({navigation}){
                         </TouchableOpacity>
                     }
                     <Image source={require('../assets/images/Logo.png')} style={style.logo}/>
-                    <TouchableOpacity style={style.avatarContainer} onPress={() => {navigation.navigate('Profile')}}>
-                    <Avatar rounded={true} style={style.avatar}/>
-                    </TouchableOpacity>
+                    { (pageName != 'Onboarding' && pageName != 'Profile') && <TouchableOpacity style={style.avatarContainer} onPress={() => {navigation.navigate('Profile')}}>
+                        <Avatar
+                        rounded={true}
+                        style={style.avatar}
+                        title={(userProfile?.firstName ? userProfile.firstName[0] : '') + (userProfile?.lastName ? userProfile.lastName[0] : '')}
+                        source={userProfile?.profilePicture ? {uri: userProfile.profilePicture} : null}
+                        />
+                    </TouchableOpacity>}
                 </View>
             </SafeAreaView>
             )
@@ -60,8 +77,3 @@ const style = StyleSheet.create(
         }
     }
 )
-
-// export default function(props){
-//     // const navigation = useNavigation()
-//     return <Header {...props}/>
-// }

@@ -1,13 +1,13 @@
 import {Component} from 'react'
 import { StyleSheet, ScrollView, View } from "react-native";
 import { HighlightButton, PrimaryButton, SecondaryButton } from '../components/Buttons';
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import CheckboxEntry from "../components/CheckboxEntry";
 import EntryField from "../components/EntryField";
 import ProfileAvatarView from '../components/profile/ProfileAvatarView';
 import { ProfileModel, ProfileEmailPreferences} from '../models/ProfileModel';
-import * as ImagePicker from 'expo-image-picker'
-
+import * as ImagePicker from 'expo-image-picker/src/ImagePicker'
+import { profile, updateProfile, clearProfile } from '../hooks/ProfileManager';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
  export default class Profile extends Component {
 
@@ -72,28 +72,22 @@ import * as ImagePicker from 'expo-image-picker'
     saveProfile = async() => {
         const emailPreferences = new ProfileEmailPreferences(this.state.orderStatus, this.state.passwordChanges, this.state.specialOffers, this.state.newsletter)
         const newProfile = new ProfileModel(this.state.firstName, this.state.lastName, this.state.email, this.state.phoneNumber, emailPreferences, this.state.image)
-        await AsyncStorage.setItem('profile', JSON.stringify(newProfile))
+        await updateProfile(newProfile)
     }
 
     loadProfile = async() => {
-        let jsonData = null
-        try{
-            jsonData = await AsyncStorage.getItem('profile')
-        }catch{
-            console.error('Couldn\'t load profile')
-        }
-        if(jsonData){
-            const profile = JSON.parse(jsonData)
+        const _profile = await profile()
+        if(_profile){
             this.setState({
-                firstName: profile.firstName,
-                lastName: profile.lastName,
-                email: profile.email,
-                phoneNumber: profile.phoneNumber,
-                orderStatus: profile.emailPreferences.orderStatus,
-                passwordChanges: profile.emailPreferences.pwChanges,
-                specialOffers: profile.emailPreferences.offers,
-                newsletter: profile.emailPreferences.newsletter,
-                image: profile.profilePicture,
+                firstName: _profile.firstName,
+                lastName: _profile.lastName,
+                email: _profile.email,
+                phoneNumber: _profile.phoneNumber,
+                orderStatus: _profile.emailPreferences?.orderStatus ?? true,
+                passwordChanges: _profile.emailPreferences?.pwChanges ?? true,
+                specialOffers: _profile.emailPreferences?.offers ?? true,
+                newsletter: _profile.emailPreferences?.newsletter ?? true,
+                image: _profile.profilePicture,
                 hasLoaded: true
             })
         }else{
@@ -117,14 +111,20 @@ import * as ImagePicker from 'expo-image-picker'
     }
 
     pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            quality: 1
-        })
+        let permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
+        if(permission.status !== 'granted'){return}
+        try{
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 1
+            })
 
-        if(!result.canceled){
-            this.setState({image: result.assets[0].uri})
+            if(!result.canceled){
+                this.setState({image: result?.uri ? result.uri : result.assets[0].uri})
+            }
+        }catch(e){
+            console.error(e)
         }
     }
 
@@ -133,20 +133,24 @@ import * as ImagePicker from 'expo-image-picker'
     }
 
     logout = async () =>{
-        await AsyncStorage.removeItem('profile',
-            this.setState({
-                firstName: null,
-                lastName: null,
-                email: null,
-                phoneNumber: null,
-                orderStatus: true,
-                passwordChanges: true,
-                specialOffers: true,
-                newsletter: true,
-                image: null,
-                hasLoaded: true
-            })
-        )
+        clearProfile()
+        this.setState({
+            firstName: null,
+            lastName: null,
+            email: null,
+            phoneNumber: null,
+            orderStatus: true,
+            passwordChanges: true,
+            specialOffers: true,
+            newsletter: true,
+            image: null,
+            hasLoaded: true
+        })
+        await AsyncStorage.removeItem('onboardingComplete')
+        this.props.navigation.reset({
+            index: 0,
+            routes: [{name: 'Onboarding'}]
+        })
     }
 }
 
