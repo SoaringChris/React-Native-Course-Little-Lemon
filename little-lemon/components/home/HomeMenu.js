@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import {View, Text, TouchableOpacity, StyleSheet, FlatList} from 'react-native'
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
 import { Colors, Typefaces } from '../../assets/GlobalStyles'
 import HomeMenuItem from './HomeMenuItem'
+import { FlatList } from 'react-native-gesture-handler'
 import axios from 'axios'
-import MenuItemModel from '../../models/MenuItemModel'
+import { Database } from '../../App'
 
 export default function HomeMenu(){
 
@@ -22,7 +23,7 @@ export default function HomeMenu(){
 
 
     return(
-        <View>
+        menuItems && <>
             <Text style={[Typefaces.sectionTitle, {padding: 16}]}>ORDER FOR DELIVERY!</Text>
             <HomeMenuHeader/>
             <FlatList
@@ -30,8 +31,15 @@ export default function HomeMenu(){
                 renderItem={({item})=>{return(<HomeMenuItem menuItem={item}/>)}}
                 keyExtractor={(item)=>{return(item.name)}}
             />
-        </View>
+        </>
     )
+}
+
+function getMenuItems(){
+    Database.readTransaction(tx =>{
+        tx.executeSql('SELECT * FROM items', null,
+        )
+    })
 }
 
 function HomeMenuHeader(){

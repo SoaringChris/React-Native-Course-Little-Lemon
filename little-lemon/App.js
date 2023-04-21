@@ -1,5 +1,5 @@
 import {useCallback, useState, useEffect} from 'react'
-import { StyleSheet, View, Text} from 'react-native';
+import { StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Onboarding from './screens/Onboarding';
 import {NavigationContainer} from '@react-navigation/native'
@@ -9,8 +9,11 @@ import Home from './screens/Home';
 import useFonts from './hooks/useFonts'
 import * as SplashScreen from 'expo-splash-screen'
 import Header from './components/Header';
+import {openDatabase} from 'expo-sqlite'
 
 SplashScreen.preventAutoHideAsync()
+
+export const Database = openDatabase('little_lemon')
 
 export default function App() {
   const [hasLoaded, setHasLoaded] = useState(false)
@@ -60,11 +63,3 @@ if(!hasLoaded){
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

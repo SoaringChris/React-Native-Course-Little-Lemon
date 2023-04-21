@@ -1,12 +1,11 @@
 import { Component } from "react";
-import { Image, SafeAreaView, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, SafeAreaView, View, StyleSheet, TouchableOpacity, Platform, StatusBar } from "react-native";
 import { Avatar, Icon } from "react-native-elements";
-import {useNavigation} from '@react-navigation/native'
 
 export default function({navigation}){
         return(
             <SafeAreaView>
-                <View  style={style.container}>
+                <View  style={[style.container, {marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}]}>
                     {navigation.canGoBack() &&
                         <TouchableOpacity  style={style.backIcon} onPress={navigation.goBack}>
                             <View>
@@ -15,7 +14,9 @@ export default function({navigation}){
                         </TouchableOpacity>
                     }
                     <Image source={require('../assets/images/Logo.png')} style={style.logo}/>
+                    <TouchableOpacity style={style.avatarContainer} onPress={() => {navigation.navigate('Profile')}}>
                     <Avatar rounded={true} style={style.avatar}/>
+                    </TouchableOpacity>
                 </View>
             </SafeAreaView>
             )
@@ -31,7 +32,7 @@ const style = StyleSheet.create(
             alignContent: 'center',
             width: '100%',
             paddingVertical: 8,
-            backgroundColor: 'white'
+            backgroundColor: 'white',
         },
         avatar:{
             height: 40,
@@ -41,10 +42,14 @@ const style = StyleSheet.create(
                 .toString(16)
                 .padStart(6, '0')}`,
             borderRadius: Number.MAX_SAFE_INTEGER,
+        },
+
+        avatarContainer:{
             position: 'absolute',
             right: 0,
             alignSelf: 'center'
         },
+
         backIcon:{
             height: 40,
             width: 40,
