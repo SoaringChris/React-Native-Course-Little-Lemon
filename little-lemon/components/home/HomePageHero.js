@@ -1,9 +1,16 @@
 import { Component } from "react";
-import {View, StyleSheet, Text, Image} from "react-native"
+import {View, StyleSheet, Text, Image, TextInput} from "react-native"
 import {Typefaces, Colors} from "../../assets/GlobalStyles";
 import {Icon} from 'react-native-elements';
+import { debounce } from "../../Util";
 
 export default class HomePageHero extends Component {
+
+    constructor(props) {
+        super(props);
+        this.onSearch = props.onSearch
+    }
+
     render(){ return(
             <View style={styles.container}>
                 <Text style={[Typefaces.title, {color: Colors.primary2}]}>Little Lemon</Text>
@@ -15,13 +22,16 @@ export default class HomePageHero extends Component {
                     <View style={styles.spacer}/>
                     <Image style={styles.image} source={require('../../assets/images/Hero_image.png')} />
                 </View>
-                <View>
-                    <View style={styles.searchIcon}>
-                        <Icon name='search' color='black' size={20} style={{paddingTop: 2}}/>
-                    </View>
+                <View style={styles.searchArea}>
+                    <Icon name='search' color='black' size={20} style={styles.searchIcon}/>
+                    <TextInput style={styles.searchInput} onChangeText={(text) => this.searchChanged(text)}/>
                 </View>
             </View>
         )
+    }
+
+    searchChanged(text){
+        debounce(() => this.onSearch(text))
     }
 }
 
@@ -55,15 +65,23 @@ const styles = StyleSheet.create({
         flex: 1
     },
 
-    searchIcon: {
-        borderRadius: Number.MAX_SAFE_INTEGER,
-        backgroundColor: Colors.secondary3,
-        marginTop:16,
-        width: 28,
-        height: 24,
-        alignItems: 'center',
-        JustifyContent: 'center',
+    searchArea: {
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        borderRadius: 8,
+        height: 36,
         alignContent: 'center',
-        textAlignment: 'center',
+        marginTop: 12
+    },
+
+    searchInput:{
+        flex: 5
+    },
+
+    searchIcon:{
+        justifyContent: 'center',
+        height: '100%',
+        paddingLeft: 4,
+        marginRight: -2
     }
 })

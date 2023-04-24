@@ -14,7 +14,8 @@ export default class HomeMenu extends Component {
         this.state = {
             menuItems: null,
             categories: null,
-            selectedCategories: []
+            selectedCategories: [],
+            searchTerm: props.searchTerm
         }
     }
 
@@ -26,6 +27,11 @@ export default class HomeMenu extends Component {
         if(!this.state.categories){
             
             this.fetchCategories()
+        }
+
+        if(this.state.searchTerm !== this.props.searchTerm){
+            this.fetchMenuItems()
+            this.setState({searchTerm: this.props.searchTerm})
         }
 
 
@@ -77,6 +83,9 @@ export default class HomeMenu extends Component {
             let query = 'SELECT * FROM items'
             if(this.state.selectedCategories.length > 0){
                 query += ` WHERE category IN (${this.state.selectedCategories.map((e) => {return "\"" + e +"\""}).join(', ')})`
+            }
+            if(this.props.searchTerm.length > 0){
+                query += ` ${this.state.selectedCategories.length > 0 ? 'AND' : 'WHERE'} name LIKE '%${this.props.searchTerm}%'`
             }
             tx.executeSql(query, null,
             (tx, {rows: {_array}})=>{
